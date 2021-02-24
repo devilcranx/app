@@ -82,16 +82,15 @@ const Trigger = ({
 const BaseActions = ({
   className,
   isAuthor,
-  id,
-  name,
   watchlist,
   isPro,
+  type,
   isAuthorLoading,
   onClick,
-  type = 'screener',
-  createWatchlist,
-  noItemsCheck
+  createWatchlist
 }) => {
+  const { id, name } = watchlist
+
   if (!id) {
     return null
   }
@@ -202,7 +201,7 @@ const BaseActions = ({
                 }
               />
             </ProPopupWrapper>
-            {isAuthor && (noItemsCheck || screeners.length > 1) && (
+            {isAuthor && screeners.length > 1 && (
               <Delete
                 title={`Do you want to delete this ${type}?`}
                 id={id}
