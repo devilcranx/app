@@ -17,6 +17,7 @@ import PriceDAADivergenceWidget from './Widget/PriceDAADivergenceWidget'
 import AdjustedPriceDAADivergenceWidget from './Widget/PriceDAADivergenceWidget/Adjusted'
 import { mergeConnectedWidgetsWithSelected } from './Widget/helpers'
 import SelectionOverview from './Overview/SelectionOverview'
+import { loadIsSidebarLocked } from './Sidebar/utils'
 import HolderDistributionCombinedBalanceWidget from './Widget/HolderDistributionWidget/CombinedBalance'
 import * as Type from './Sidebar/Button/types'
 import { getNewInterval, INTERVAL_ALIAS } from '../SANCharts/IntervalSelector'
@@ -41,13 +42,15 @@ export const Studio = ({
   )
   const [isICOPriceDisabled, setIsICOPriceDisabled] = useState(true)
   const [isICOPriceActive, setIsICOPriceActive] = useState(false)
-  const [isSidebarClosed, setIsSidebarClosed] = useState()
+  const [isSidebarPeeked, setIsSidebarPeeked] = useState(false)
+  const [isSidebarLocked, setIsSidebarLocked] = useState(loadIsSidebarLocked)
+
   const { currentPhase, previousPhase, setPhase } = usePhase(Phase.IDLE)
   const PressedModifier = usePressedModifier()
   const isOverviewOpened = currentPhase.startsWith(Phase.MAPVIEW)
 
   useKeyboardCmdShortcut('m', toggleOverview)
-  useKeyboardCmdShortcut('\\', toggleSidebar)
+  useKeyboardCmdShortcut('\\', () => setIsSidebarLocked(!isSidebarLocked))
 
   useEffect(
     () => {
@@ -66,10 +69,6 @@ export const Studio = ({
     } else {
       setPhase(Phase.MAPVIEW)
     }
-  }
-
-  function toggleSidebar () {
-    setIsSidebarClosed(!isSidebarClosed)
   }
 
   function rerenderWidgets () {
@@ -291,12 +290,15 @@ export const Studio = ({
         activeMetrics={selectedMetrics}
         sidepanel={sidepanel}
         widgets={widgets}
-        isSidebarClosed={isSidebarClosed}
+        isOverviewOpened={isOverviewOpened}
+        isPeeked={isSidebarPeeked}
+        isLocked={isSidebarLocked}
         isICOPriceDisabled={isICOPriceDisabled}
         isICOPriceActive={isICOPriceActive}
         toggleMetric={onSidebarItemClick}
         setMetricSettingMap={setSelectedMetricSettingsMap}
-        setIsSidebarClosed={setIsSidebarClosed}
+        setIsPeeked={setIsSidebarPeeked}
+        setIsLocked={setIsSidebarLocked}
       />
       <main className={styles.main}>
         <Main
