@@ -1,38 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import cx from 'classnames'
+import PropTypes from 'prop-types'
 import Button from '@santiment-network/ui/Button'
 import Message from '@santiment-network/ui/Message'
 import PublicityToggle from '../ChangeVisibility'
-import { isDynamicWatchlist } from '../../utils'
 import ShareModalTrigger from '../../../../components/Share/ShareModalTrigger'
 import { useShortShareLink } from '../../../../components/Share/hooks'
+import { detectWatchlistType } from '../../../Watchlist/detector'
 import styles from './index.module.scss'
 
-const CustomContent = ({ isPublic, watchlist, type }) => (
-  <>
-    <div
-      className={cx(
-        styles.messageWrapper,
-        isPublic && styles.messageWrapper__hide
-      )}
-    >
-      <Message variant='warn' className={styles.message}>
-        Your {type} is private. Please, switch it to “Public” first.
-      </Message>
-    </div>
-    <PublicityToggle
-      variant='flat'
-      watchlist={watchlist}
-      className={styles.toggle}
-    />
-  </>
-)
-
-const Share = ({ watchlist, isAuthor, className, customLink }) => {
+const Share = ({ watchlist, isAuthor }) => {
   const [isPublic, setIsPublic] = useState(watchlist.isPublic)
   const { shortShareLink, getShortShareLink } = useShortShareLink()
-
-  const type = isDynamicWatchlist(watchlist) ? 'screener' : 'watchlist'
+  const { label } = detectWatchlistType(watchlist)
 
   useEffect(
     () => {
@@ -43,25 +23,48 @@ const Share = ({ watchlist, isAuthor, className, customLink }) => {
     [watchlist.isPublic]
   )
 
-  return isAuthor ? (
+  if (!isAuthor || !watchlist) {
+    return null
+  }
+
+  return (
     <ShareModalTrigger
-      dialogTitle={`Share ${type}`}
-      shareLink={customLink || shortShareLink}
+      dialogTitle={`Share ${label}`}
+      shareLink={shortShareLink}
       isDisabled={!isPublic}
       trigger={props => (
         <Button
           {...props}
-          className={cx(styles.trigger, className)}
-          onMouseDown={customLink ? undefined : getShortShareLink}
+          className={styles.trigger}
+          onMouseDown={getShortShareLink}
           icon='share'
         >
           Share
         </Button>
       )}
     >
-      <CustomContent watchlist={watchlist} isPublic={isPublic} type={type} />
+      <div
+        className={cx(
+          styles.messageWrapper,
+          isPublic && styles.messageWrapper__hide
+        )}
+      >
+        <Message variant='warn' className={styles.message}>
+          Your {label} is private. Please, switch it to “Public” first.
+        </Message>
+      </div>
+      <PublicityToggle
+        variant='flat'
+        watchlist={watchlist}
+        className={styles.toggle}
+      />
     </ShareModalTrigger>
-  ) : null
+  )
+}
+
+Share.propTypes = {
+  watchlist: PropTypes.object.isRequired,
+  isAuthor: PropTypes.bool.isRequired
 }
 
 export default Share

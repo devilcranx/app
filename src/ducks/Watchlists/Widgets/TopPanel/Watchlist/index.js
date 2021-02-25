@@ -1,10 +1,11 @@
 import React from 'react'
 import cx from 'classnames'
-import BaseActions from '../WatchlistBaseActions'
+import Actions from '../Actions'
 import Share from '../../../Actions/Share'
 import Widgets from '../Widgets'
 import WeeklyReport from '../../../Actions/WeeklyReport'
 import HelpPopup from '../../../../../components/HelpPopup/HelpPopup'
+import { useIsAuthor } from '../../../../Watchlist/gql/common/hooks'
 import styles from '../index.module.scss'
 
 const TopPanel = ({
@@ -12,13 +13,12 @@ const TopPanel = ({
   description,
   id,
   watchlist,
-  isAuthor,
-  isAuthorLoading,
   className,
   isMonitored,
   assets,
   ...props
 }) => {
+  const { isAuthor, isAuthorLoading } = useIsAuthor(watchlist)
   return (
     <section className={cx(styles.wrapper, className)}>
       <div className={styles.row}>
@@ -28,18 +28,15 @@ const TopPanel = ({
             {description}
           </HelpPopup>
         )}
-        {id && (
-          <BaseActions
-            isAuthor={isAuthor}
-            isAuthorLoading={isAuthorLoading}
-            watchlist={watchlist}
-            assets={assets}
-          />
-        )}
+        <Actions
+          isAuthor={isAuthor}
+          isAuthorLoading={isAuthorLoading}
+          watchlist={watchlist}
+        />
       </div>
       <div className={styles.row}>
         <Widgets {...props} />
-        {watchlist && <Share watchlist={watchlist} isAuthor={isAuthor} />}
+        <Share watchlist={watchlist} isAuthor={isAuthor} />
         {isAuthor && (
           <WeeklyReport id={id} name={name} isMonitored={isMonitored} />
         )}

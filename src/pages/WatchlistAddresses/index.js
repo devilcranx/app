@@ -1,22 +1,19 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
-import {
-  useAddressWatchlist,
-  useIsWatchlistAuthor,
-  useAddressWatchlistItems
-} from './hooks'
+import { useAddressWatchlist, useAddressWatchlistItems } from './hooks'
 import Page from '../../ducks/Page'
 import { getIdFromSEOLink } from '../../utils/url'
 import WatchlistAddressesTable from '../../ducks/WatchlistAddressesTable'
 import PageLoader from '../../components/Loader/PageLoader'
-import BaseActions from '../../ducks/Watchlists/Widgets/TopPanel/WatchlistBaseActions'
+import Actions from '../../ducks/Watchlists/Widgets/TopPanel/Actions'
+import { useIsAuthor } from '../../ducks/Watchlist/gql/common/hooks'
 import styles from './index.module.scss'
 
 const WatchlistAddress = ({ match }) => {
   const { watchlist, isLoading } = useAddressWatchlist(
     getIdFromSEOLink(match.params.nameId)
   )
-  const isAuthor = useIsWatchlistAuthor(watchlist)
+  const { isAuthor, isAuthorLoading } = useIsAuthor(watchlist)
   const items = useAddressWatchlistItems(watchlist)
 
   if (isLoading) return <PageLoader />
@@ -28,7 +25,13 @@ const WatchlistAddress = ({ match }) => {
       headerClassName={styles.header}
       isWithPadding={false}
       title={watchlist.name}
-      actions={<BaseActions watchlist={watchlist} isAuthor={isAuthor} />}
+      actions={
+        <Actions
+          watchlist={watchlist}
+          isAuthor={isAuthor}
+          isAuthorLoading={isAuthorLoading}
+        />
+      }
     >
       <WatchlistAddressesTable
         items={items}

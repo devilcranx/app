@@ -89,8 +89,6 @@ const WatchlistPage = props => {
                 assets={items}
                 watchlist={props.watchlist}
                 isMonitored={isMonitored}
-                isAuthor={isCurrentUserTheAuthor}
-                isAuthorLoading={isLoading}
                 className={styles.top}
                 widgets={widgets}
                 setWidgets={setWidgets}

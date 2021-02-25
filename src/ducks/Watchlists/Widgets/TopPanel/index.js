@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import BaseActions from './BaseActions'
+import Actions from './Actions'
 import Widgets from './Widgets'
 import Share from '../../Actions/Share'
 import Filter from '../Filter'
@@ -43,19 +43,12 @@ const TopPanel = ({
             {description}
           </HelpPopup>
         )}
-        {id && (
-          <BaseActions
-            name={name}
-            id={id}
-            isAuthor={isAuthor}
-            isPro={isPro}
-            isAuthorLoading={isAuthorLoading}
-            description={description}
-            watchlist={watchlist}
-            onClick={closeFilter}
-            type={type}
-          />
-        )}
+        <Actions
+          isAuthor={isAuthor}
+          isAuthorLoading={isAuthorLoading}
+          watchlist={watchlist}
+          onClick={closeFilter}
+        />
         {isUpdatingWatchlist && (
           <span className={styles.saving}>Saving...</span>
         )}

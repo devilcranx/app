@@ -17,8 +17,8 @@ import {
   DIRECTIONS
 } from '../../ducks/Watchlists/Widgets/Table/Columns/defaults'
 import { addRecentScreeners } from '../../utils/recent'
-import { useUser } from '../../stores/user'
 import { tableQuery } from '../../ducks/Watchlists/gql'
+import { useIsAuthor } from '../../ducks/Watchlist/gql/common/hooks'
 import { DEFAULT_SCREENER_ID } from '../../ducks/Watchlists/gql/queries'
 import { getColumns } from '../../ducks/Watchlists/Widgets/Table/Columns/builder'
 import styles from './Screener.module.scss'
@@ -50,7 +50,7 @@ const Screener = ({
   const { assets, projectsCount, loading } = getProjectsByFunction(
     ...buildFunctionQuery()
   )
-  const { user = {}, loading: userLoading } = useUser()
+  const { isAuthor, isAuthorLoading } = useIsAuthor(watchlist)
   const [tableLoading, setTableLoading] = useState(true)
   const { widgets, setWidgets } = useScreenerUrl({ location, history })
   const AppElem = document.getElementsByClassName('App')[0]
@@ -161,8 +161,6 @@ const Screener = ({
     [watchlist]
   )
 
-  const isAuthor = user && watchlist.user && watchlist.user.id === user.id
-
   return (
     <>
       <TopPanel
@@ -173,7 +171,7 @@ const Screener = ({
         loading={tableLoading}
         watchlist={watchlist}
         isAuthor={isAuthor}
-        isAuthorLoading={userLoading || isLoading}
+        isAuthorLoading={isAuthorLoading}
         isLoggedIn={isLoggedIn}
         screenerFunction={screenerFunc}
         setScreenerFunction={setScreenerFunc}
