@@ -3,31 +3,26 @@ import cx from 'classnames'
 import Actions from '../Actions'
 import Share from '../../../Actions/Share'
 import Widgets from '../Widgets'
+import Title from '../Title'
 import WeeklyReport from '../../../Actions/WeeklyReport'
-import HelpPopup from '../../../../../components/HelpPopup/HelpPopup'
 import { useIsAuthor } from '../../../../Watchlist/gql/common/hooks'
+import { detectWatchlistType, PROJECT } from '../../../../Watchlist/detector'
 import styles from '../index.module.scss'
 
-const TopPanel = ({
-  name,
-  description,
-  id,
-  watchlist,
-  className,
-  isMonitored,
-  assets,
-  ...props
-}) => {
+const TopPanel = ({ watchlist, widgets, setWidgets, className }) => {
   const { isAuthor, isAuthorLoading } = useIsAuthor(watchlist)
+  const { type } = detectWatchlistType(watchlist)
+
+  if (!watchlist.id) {
+    return null
+  }
+
+  const { name, description } = watchlist
+
   return (
     <section className={cx(styles.wrapper, className)}>
       <div className={styles.row}>
-        <h1 className={styles.name}>{name}</h1>
-        {description && (
-          <HelpPopup triggerClassName={styles.description}>
-            {description}
-          </HelpPopup>
-        )}
+        <Title name={name} description={description} />
         <Actions
           isAuthor={isAuthor}
           isAuthorLoading={isAuthorLoading}
@@ -35,11 +30,11 @@ const TopPanel = ({
         />
       </div>
       <div className={styles.row}>
-        <Widgets {...props} />
-        <Share watchlist={watchlist} isAuthor={isAuthor} />
-        {isAuthor && (
-          <WeeklyReport id={id} name={name} isMonitored={isMonitored} />
+        {type === PROJECT && (
+          <Widgets widgets={widgets} setWidgets={setWidgets} />
         )}
+        <Share watchlist={watchlist} isAuthor={isAuthor} />
+        {isAuthor && type === PROJECT && <WeeklyReport {...watchlist} />}
       </div>
     </section>
   )

@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
+import Title from './Title'
 import Actions from './Actions'
 import Widgets from './Widgets'
 import Share from '../../Actions/Share'
 import Filter from '../Filter'
 import { useUserSubscriptionStatus } from '../../../../stores/user/subscriptions'
 import ScreenerSignalDialog from '../../../Signals/ScreenerSignal/ScreenerSignalDialog'
-import HelpPopup from '../../../../components/HelpPopup/HelpPopup'
 import styles from './index.module.scss'
 
 const TopPanel = ({
@@ -37,12 +37,7 @@ const TopPanel = ({
   return (
     <section className={cx(styles.wrapper, isFilterOpen && styles.open)}>
       <div className={styles.row}>
-        <h1 className={styles.name}>{name}</h1>
-        {description && (
-          <HelpPopup triggerClassName={styles.description}>
-            {description}
-          </HelpPopup>
-        )}
+        <Title name={name} description={description} />
         <Actions
           isAuthor={isAuthor}
           isAuthorLoading={isAuthorLoading}
